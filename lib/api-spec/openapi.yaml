@@ -11,6 +11,25 @@ tags:
   - name: health
     description: Health operations
 paths:
+  /mizan/assistant:
+    post:
+      operationId: askMizan
+      summary: Analyse illustrative wedding finances using deterministic rules
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AssistantInput"
+      responses:
+        "200":
+          description: Sample analysis
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AssistantReply"
+        "400":
+          description: Invalid input
   /healthz:
     get:
       operationId: healthCheck
@@ -26,6 +45,29 @@ paths:
                 $ref: "#/components/schemas/HealthStatus"
 components:
   schemas:
+    AssistantInput:
+      type: object
+      required: [message, language, budget, savings, monthlyCapacity, remainingExpenses, monthsRemaining, guestCount]
+      properties:
+        message: { type: string, minLength: 1, maxLength: 4000 }
+        language: { type: string, enum: [en, ar] }
+        budget: { type: number, minimum: 0 }
+        savings: { type: number, minimum: 0 }
+        monthlyCapacity: { type: number, minimum: 0 }
+        remainingExpenses: { type: number, minimum: 0 }
+        monthsRemaining: { type: number, minimum: 0 }
+        guestCount: { type: integer, minimum: 1, maximum: 10000 }
+        cateringPerGuest: { type: number, minimum: 0 }
+        priorities: { type: string }
+        context: { type: string, maxLength: 12000 }
+    AssistantReply:
+      type: object
+      required: [answer, monthlyTarget, shortfall, mode]
+      properties:
+        answer: { type: string }
+        monthlyTarget: { type: number }
+        shortfall: { type: number }
+        mode: { type: string, enum: [deterministic-demo] }
     HealthStatus:
       type: object
       properties:

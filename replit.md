@@ -1,10 +1,11 @@
-# [Project name]
+# Mizan | ميزان
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+An English/Arabic Emirati wedding-planning competition demo with budgets, a wedding blueprint, fictional vendors and support programs, and simulated family collaboration.
 
 ## Run & Operate
 
 - `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
+- `pnpm --filter @workspace/mizan run dev` — frontend (use the managed workflow for PORT and BASE_PATH)
 - `pnpm run typecheck` — full typecheck across all packages
 - `pnpm run build` — typecheck + build all packages
 - `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
@@ -22,23 +23,29 @@ _Replace the heading above with the project's name, and this line with one sente
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- `artifacts/mizan/src/` — frontend, local demo persistence and bilingual UI.
+- `artifacts/api-server/src/lib/mizan.ts` — deterministic illustrative financial analysis.
+- `lib/api-spec/openapi.yaml` — assistant API contract; regenerate clients after edits.
+- `attached_assets/Pasted--REPLIT-MASTER-BUILD-PROMPT-MIZAN-1-Product-overview-Bu_1793723446020.txt` — complete original product brief.
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- Browser-local persistence is intentional for a reliable competition demonstration, as permitted in the brief. Family collaboration is simulated, not multi-user access.
+- The assistant deliberately uses a labelled deterministic rules engine so the demo never depends on a paid API or credentials.
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+Wedding organisation, editable expense and savings planning, vendor discovery/comparison, illustrative support matching, family coordination, and English/Arabic RTL support.
 
 ## User preferences
 
-_Populate as you build — explicit user instructions worth remembering across sessions._
+- All financial figures, vendors, ratings, support benefits, eligibility and deadlines must be clearly fictional SAMPLE/ILLUSTRATIVE data. Never imply real UAE government support, real vendor booking, or real payment capability.
+- Mahr is distinct from vendor expenses. Do not assign financial responsibilities based on bride/groom gender.
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+- Preserve the OpenAPI title `Api`; run codegen after contract changes.
+- Use existing managed artifact workflows, not root `pnpm dev` or replacement services.
 
 ## Pointers
 

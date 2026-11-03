@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Mizan | ميزان"
+description = "A bilingual Emirati wedding planning competition demo with budgeting, wedding blueprint, vendor comparison, fictional support matching, family coordination and a deterministic budget assistant."
+version = "1.0.0"
+id = "artifacts/mizan"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 21712
+
+[services.development]
+run = "pnpm --filter @workspace/mizan run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/mizan", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/mizan/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "21712"
+BASE_PATH = "/"
