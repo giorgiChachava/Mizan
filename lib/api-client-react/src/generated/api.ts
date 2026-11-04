@@ -22,7 +22,14 @@ import type {
 import type {
   AssistantInput,
   AssistantReply,
-  HealthStatus
+  HealthStatus,
+  Invitation,
+  InvitationEnvelope,
+  InvitationInput,
+  RsvpInput,
+  RsvpReceipt,
+  WeddingGuest,
+  WeddingGuestInput
 } from './api.schemas';
 
 import { customFetch } from '../custom-fetch';
@@ -51,6 +58,623 @@ const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKe
   }
   return result;
 };
+
+export const getGetMyInvitationUrl = () => {
+
+
+
+
+  return `/api/mizan/invitation`
+}
+
+/**
+ * @summary Read the current browser's private demo wedding invitation
+ */
+export const getMyInvitation = async ( options?: Parameters<typeof customFetch>[1]): Promise<InvitationEnvelope> => {
+
+  return customFetch<InvitationEnvelope>(getGetMyInvitationUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetMyInvitationQueryKey = () => {
+    return [
+    `/api/mizan/invitation`
+    ] as const;
+    }
+
+
+export const getGetMyInvitationQueryOptions = <TData = Awaited<ReturnType<typeof getMyInvitation>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getMyInvitation>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetMyInvitationQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getMyInvitation>>> = ({ signal }) => getMyInvitation({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getMyInvitation>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetMyInvitationQueryResult = NonNullable<Awaited<ReturnType<typeof getMyInvitation>>>
+export type GetMyInvitationQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Read the current browser's private demo wedding invitation
+ */
+
+export function useGetMyInvitation<TData = Awaited<ReturnType<typeof getMyInvitation>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getMyInvitation>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetMyInvitationQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getSaveInvitationUrl = () => {
+
+
+
+
+  return `/api/mizan/invitation`
+}
+
+export const saveInvitation = async (invitationInput: InvitationInput, options?: Parameters<typeof customFetch>[1]): Promise<Invitation> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return customFetch<Invitation>(getSaveInvitationUrl(),
+  {
+    ...options,
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(invitationInput)
+  }
+);}
+
+
+
+
+
+export const getSaveInvitationMutationKey = () => ['saveInvitation'] as const;
+
+export const getSaveInvitationMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof saveInvitation>>, TError,SaveInvitationMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof saveInvitation>>, TError,SaveInvitationMutationVariables, TContext> => {
+
+const mutationKey = getSaveInvitationMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof saveInvitation>>, SaveInvitationMutationVariables> = (props) => {
+          const {data} = props ?? {};
+
+          return  saveInvitation(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type SaveInvitationMutationResult = NonNullable<Awaited<ReturnType<typeof saveInvitation>>>
+    export type SaveInvitationMutationBody = BodyType<InvitationInput>
+    export type SaveInvitationMutationError = ErrorType<unknown>
+    export type SaveInvitationMutationVariables = {data: BodyType<InvitationInput>}
+
+    export const useSaveInvitation = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof saveInvitation>>, TError,SaveInvitationMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof saveInvitation>>,
+        TError,
+        SaveInvitationMutationVariables,
+        TContext
+      > => {
+      return useMutation(getSaveInvitationMutationOptions(options));
+    }
+
+export const getListWeddingGuestsUrl = () => {
+
+
+
+
+  return `/api/mizan/guests`
+}
+
+export const listWeddingGuests = async ( options?: Parameters<typeof customFetch>[1]): Promise<WeddingGuest[]> => {
+
+  return customFetch<WeddingGuest[]>(getListWeddingGuestsUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListWeddingGuestsQueryKey = () => {
+    return [
+    `/api/mizan/guests`
+    ] as const;
+    }
+
+
+export const getListWeddingGuestsQueryOptions = <TData = Awaited<ReturnType<typeof listWeddingGuests>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listWeddingGuests>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListWeddingGuestsQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listWeddingGuests>>> = ({ signal }) => listWeddingGuests({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listWeddingGuests>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type ListWeddingGuestsQueryResult = NonNullable<Awaited<ReturnType<typeof listWeddingGuests>>>
+export type ListWeddingGuestsQueryError = ErrorType<unknown>
+
+
+
+export function useListWeddingGuests<TData = Awaited<ReturnType<typeof listWeddingGuests>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listWeddingGuests>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getListWeddingGuestsQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getAddWeddingGuestUrl = () => {
+
+
+
+
+  return `/api/mizan/guests`
+}
+
+export const addWeddingGuest = async (weddingGuestInput: WeddingGuestInput, options?: Parameters<typeof customFetch>[1]): Promise<WeddingGuest> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return customFetch<WeddingGuest>(getAddWeddingGuestUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(weddingGuestInput)
+  }
+);}
+
+
+
+
+
+export const getAddWeddingGuestMutationKey = () => ['addWeddingGuest'] as const;
+
+export const getAddWeddingGuestMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof addWeddingGuest>>, TError,AddWeddingGuestMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof addWeddingGuest>>, TError,AddWeddingGuestMutationVariables, TContext> => {
+
+const mutationKey = getAddWeddingGuestMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof addWeddingGuest>>, AddWeddingGuestMutationVariables> = (props) => {
+          const {data} = props ?? {};
+
+          return  addWeddingGuest(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AddWeddingGuestMutationResult = NonNullable<Awaited<ReturnType<typeof addWeddingGuest>>>
+    export type AddWeddingGuestMutationBody = BodyType<WeddingGuestInput>
+    export type AddWeddingGuestMutationError = ErrorType<unknown>
+    export type AddWeddingGuestMutationVariables = {data: BodyType<WeddingGuestInput>}
+
+    export const useAddWeddingGuest = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof addWeddingGuest>>, TError,AddWeddingGuestMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof addWeddingGuest>>,
+        TError,
+        AddWeddingGuestMutationVariables,
+        TContext
+      > => {
+      return useMutation(getAddWeddingGuestMutationOptions(options));
+    }
+
+export const getEditWeddingGuestUrl = (id: string,) => {
+
+
+
+
+  return `/api/mizan/guests/${id}`
+}
+
+export const editWeddingGuest = async (id: string,
+    weddingGuestInput: WeddingGuestInput, options?: Parameters<typeof customFetch>[1]): Promise<WeddingGuest> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return customFetch<WeddingGuest>(getEditWeddingGuestUrl(id),
+  {
+    ...options,
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(weddingGuestInput)
+  }
+);}
+
+
+
+
+
+export const getEditWeddingGuestMutationKey = () => ['editWeddingGuest'] as const;
+
+export const getEditWeddingGuestMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof editWeddingGuest>>, TError,EditWeddingGuestMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof editWeddingGuest>>, TError,EditWeddingGuestMutationVariables, TContext> => {
+
+const mutationKey = getEditWeddingGuestMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof editWeddingGuest>>, EditWeddingGuestMutationVariables> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  editWeddingGuest(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type EditWeddingGuestMutationResult = NonNullable<Awaited<ReturnType<typeof editWeddingGuest>>>
+    export type EditWeddingGuestMutationBody = BodyType<WeddingGuestInput>
+    export type EditWeddingGuestMutationError = ErrorType<unknown>
+    export type EditWeddingGuestMutationVariables = {id: string;data: BodyType<WeddingGuestInput>}
+
+    export const useEditWeddingGuest = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof editWeddingGuest>>, TError,EditWeddingGuestMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof editWeddingGuest>>,
+        TError,
+        EditWeddingGuestMutationVariables,
+        TContext
+      > => {
+      return useMutation(getEditWeddingGuestMutationOptions(options));
+    }
+
+export const getRemoveWeddingGuestUrl = (id: string,) => {
+
+
+
+
+  return `/api/mizan/guests/${id}`
+}
+
+export const removeWeddingGuest = async (id: string, options?: Parameters<typeof customFetch>[1]): Promise<void> => {
+
+  return customFetch<void>(getRemoveWeddingGuestUrl(id),
+  {
+    ...options,
+    method: 'DELETE'
+
+
+  }
+);}
+
+
+
+
+
+export const getRemoveWeddingGuestMutationKey = () => ['removeWeddingGuest'] as const;
+
+export const getRemoveWeddingGuestMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removeWeddingGuest>>, TError,RemoveWeddingGuestMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof removeWeddingGuest>>, TError,RemoveWeddingGuestMutationVariables, TContext> => {
+
+const mutationKey = getRemoveWeddingGuestMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof removeWeddingGuest>>, RemoveWeddingGuestMutationVariables> = (props) => {
+          const {id} = props ?? {};
+
+          return  removeWeddingGuest(id,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type RemoveWeddingGuestMutationResult = NonNullable<Awaited<ReturnType<typeof removeWeddingGuest>>>
+
+    export type RemoveWeddingGuestMutationError = ErrorType<unknown>
+    export type RemoveWeddingGuestMutationVariables = {id: string}
+
+    export const useRemoveWeddingGuest = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removeWeddingGuest>>, TError,RemoveWeddingGuestMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof removeWeddingGuest>>,
+        TError,
+        RemoveWeddingGuestMutationVariables,
+        TContext
+      > => {
+      return useMutation(getRemoveWeddingGuestMutationOptions(options));
+    }
+
+export const getGetPublicInvitationUrl = (token: string,) => {
+
+
+
+
+  return `/api/mizan/invitations/${token}`
+}
+
+export const getPublicInvitation = async (token: string, options?: Parameters<typeof customFetch>[1]): Promise<Invitation> => {
+
+  return customFetch<Invitation>(getGetPublicInvitationUrl(token),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetPublicInvitationQueryKey = (token: string,) => {
+    return [
+    `/api/mizan/invitations/${token}`
+    ] as const;
+    }
+
+
+export const getGetPublicInvitationQueryOptions = <TData = Awaited<ReturnType<typeof getPublicInvitation>>, TError = ErrorType<unknown>>(token: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getPublicInvitation>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetPublicInvitationQueryKey(token);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getPublicInvitation>>> = ({ signal }) => getPublicInvitation(token, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: token !== null && token !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getPublicInvitation>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetPublicInvitationQueryResult = NonNullable<Awaited<ReturnType<typeof getPublicInvitation>>>
+export type GetPublicInvitationQueryError = ErrorType<unknown>
+
+
+
+export function useGetPublicInvitation<TData = Awaited<ReturnType<typeof getPublicInvitation>>, TError = ErrorType<unknown>>(
+ token: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getPublicInvitation>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetPublicInvitationQueryOptions(token,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getSubmitRsvpUrl = (token: string,) => {
+
+
+
+
+  return `/api/mizan/invitations/${token}/rsvp`
+}
+
+export const submitRsvp = async (token: string,
+    rsvpInput: RsvpInput, options?: Parameters<typeof customFetch>[1]): Promise<RsvpReceipt> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return customFetch<RsvpReceipt>(getSubmitRsvpUrl(token),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(rsvpInput)
+  }
+);}
+
+
+
+
+
+export const getSubmitRsvpMutationKey = () => ['submitRsvp'] as const;
+
+export const getSubmitRsvpMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof submitRsvp>>, TError,SubmitRsvpMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof submitRsvp>>, TError,SubmitRsvpMutationVariables, TContext> => {
+
+const mutationKey = getSubmitRsvpMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof submitRsvp>>, SubmitRsvpMutationVariables> = (props) => {
+          const {token,data} = props ?? {};
+
+          return  submitRsvp(token,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type SubmitRsvpMutationResult = NonNullable<Awaited<ReturnType<typeof submitRsvp>>>
+    export type SubmitRsvpMutationBody = BodyType<RsvpInput>
+    export type SubmitRsvpMutationError = ErrorType<unknown>
+    export type SubmitRsvpMutationVariables = {token: string;data: BodyType<RsvpInput>}
+
+    export const useSubmitRsvp = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof submitRsvp>>, TError,SubmitRsvpMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof submitRsvp>>,
+        TError,
+        SubmitRsvpMutationVariables,
+        TContext
+      > => {
+      return useMutation(getSubmitRsvpMutationOptions(options));
+    }
 
 export const getAskMizanUrl = () => {
 

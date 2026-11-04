@@ -1,20 +1,19 @@
 import { useMemo, useState, type ReactNode } from 'react';
 import { Link, useLocation } from 'wouter';
-import { Bell, Bot, CalendarHeart, HandCoins, LayoutDashboard, Menu, Settings, Store, Users, Wallet, X, AlertTriangle, UserRound, RefreshCw } from 'lucide-react';
+import { Bell, CalendarHeart, LayoutDashboard, Mail, Menu, Settings, Store, Wallet, X, AlertTriangle, Sparkles } from 'lucide-react';
 import { useApp } from '@/lib/store';
 import { useT, aed, fmtDate } from '@/lib/i18n';
-import { daysUntil } from '@/lib/calc';
+import { daysUntil, outstandingOf } from '@/lib/calc';
+import { effectiveDate, TIMEFRAME_OPTS } from '@/lib/profile';
+import { WeddingQuiz } from '@/components/quiz';
 import { cn } from '@/lib/utils';
 
 export const NAV = [
-  { href: '/', icon: LayoutDashboard, en: 'Dashboard', ar: 'لوحة التحكم' },
-  { href: '/wedding', icon: CalendarHeart, en: 'My Wedding', ar: 'زفافي' },
-  { href: '/budget', icon: Wallet, en: 'My Budget', ar: 'ميزانيتي' },
-  { href: '/vendors', icon: Store, en: 'Services & Vendors', ar: 'الخدمات والمزودون' },
-  { href: '/assistant', icon: Bot, en: 'AI Assistant', ar: 'المساعد الذكي' },
-  { href: '/support', icon: HandCoins, en: 'Support Programs', ar: 'برامج الدعم' },
-  { href: '/family', icon: Users, en: 'Family Collaboration', ar: 'التعاون العائلي' },
-  { href: '/settings', icon: Settings, en: 'Settings', ar: 'الإعدادات' },
+  { href: '/', icon: LayoutDashboard, en: 'Dashboard', ar: 'لوحة التحكم', short: { en: 'Home', ar: 'الرئيسية' } },
+  { href: '/wedding', icon: CalendarHeart, en: 'My Wedding', ar: 'زفافي', short: { en: 'Wedding', ar: 'زفافي' } },
+  { href: '/budget', icon: Wallet, en: 'Budget', ar: 'الميزانية', short: { en: 'Budget', ar: 'الميزانية' } },
+  { href: '/vendors', icon: Store, en: 'Vendors', ar: 'المزودون', short: { en: 'Vendors', ar: 'المزودون' } },
+  { href: '/invitations', icon: Mail, en: 'Invitations & Guests', ar: 'الدعوات والضيوف', short: { en: 'Invites', ar: 'الدعوات' } },
 ];
 
 function Logo({ light }: { light?: boolean }) {
@@ -25,8 +24,7 @@ function Logo({ light }: { light?: boolean }) {
         <span className="absolute h-[1px] w-6 bg-gold" />
       </span>
       <span className="leading-none">
-        <span className={cn('block font-serif text-2xl', light ? 'text-ivory' : 'text-forest')}>Mizan</span>
-        <span className="block text-[11px] text-gold" style={{ fontFamily: 'IBM Plex Sans Arabic' }}>ميزان</span>
+        <span className={cn('block font-serif text-2xl', light ? 'text-ivory' : 'text-forest')}>Mizan <span className="text-gold">|</span> <span className="text-xl" style={{ fontFamily: 'IBM Plex Sans Arabic' }}>ميزان</span></span>
       </span>
     </Link>
   );
@@ -57,28 +55,30 @@ export function useNotifications() {
   const { t, lang } = useT();
   return useMemo(() => {
     const items: { id: string; text: string; when: string; days: number }[] = [];
-    state.expenses.filter((e) => e.status !== 'paid').forEach((e) => {
-      const d = daysUntil(e.date);
-      if (d <= 45) items.push({ id: 'e' + e.id, days: d, when: fmtDate(e.date, lang), text: `${t('Payment due', 'دفعة مستحقة')}: ${e.description} — ${aed(e.amount - e.paidAmount, lang)} (${t('sample', 'مثال')})` });
+    state.expenses.filter((e) => outstandingOf(e) > 0 && e.dueDate).forEach((e) => {
+      const d = daysUntil(e.dueDate);
+      if (d <= 45) items.push({ id: 'e' + e.id, days: d, when: fmtDate(e.dueDate, lang), text: `${t('Payment due', 'دفعة مستحقة')}: ${e.description} — ${aed(outstandingOf(e), lang)}` });
     });
     state.tasks.filter((x) => !x.done && x.deadline).forEach((x) => {
       const d = daysUntil(x.deadline);
       if (d <= 30) items.push({ id: 't' + x.id, days: d, when: fmtDate(x.deadline, lang), text: `${d < 0 ? t('Overdue', 'متأخرة') : t('Task due', 'مهمة مستحقة')}: ${x.title}` });
     });
-    state.collaborators.filter((c) => c.status === 'invited').forEach((c) => items.push({ id: 'c' + c.id, days: 999, when: '', text: `${t('Invitation pending', 'دعوة بانتظار القبول')}: ${c.name}` }));
     return items.sort((a, b) => a.days - b.days);
   }, [state, t, lang]);
 }
 
 export function Shell({ children }: { children: ReactNode }) {
-  const { state, update, storageError } = useApp();
-  const { t, isAr } = useT();
+  const { state, update, storageError, setQuizOpen } = useApp();
+  const { t, b, isAr } = useT();
+  const [readNotifs, setReadNotifs] = useState<string[]>(() => { try { return JSON.parse(localStorage.getItem('mizan-read-notifs') || '[]'); } catch { return []; } });
+  const markRead = (ids: string[]) => { setReadNotifs(ids); try { localStorage.setItem('mizan-read-notifs', JSON.stringify(ids)); } catch { /* storage unavailable */ } };
+  const wDate = effectiveDate(state.profile);
   const [mobile, setMobile] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
   const [profOpen, setProfOpen] = useState(false);
   const [, nav] = useLocation();
   const notifs = useNotifications();
-  const unread = notifs.filter((n) => !state.readNotifs.includes(n.id)).length;
+  const unread = notifs.filter((n) => !readNotifs.includes(n.id)).length;
   const setLang = (l: 'en' | 'ar') => update((s) => ({ ...s, profile: { ...s.profile, lang: l } }));
 
   return (
@@ -90,7 +90,7 @@ export function Shell({ children }: { children: ReactNode }) {
         <div className="relative mt-10 flex-1"><NavItems /></div>
         <div className="relative rounded-2xl border border-gold/25 bg-sidebar-accent/50 p-4 text-xs text-ivory/70">
           <div className="mb-1 font-semibold uppercase tracking-[0.18em] text-gold">{t('Your wedding', 'زفافك')}</div>
-          <div className="font-serif text-lg text-ivory">{fmtDate(state.profile.weddingDate, state.profile.lang)}</div>
+          <div className="font-serif text-lg text-ivory">{wDate ? fmtDate(wDate, state.profile.lang) : state.profile.dateMode === 'timeframe' ? b(TIMEFRAME_OPTS[state.profile.timeframe]) : t('Date to be decided', 'التاريخ لم يحدد')}</div>
           <div>{t('Your traditions. Your budget.', 'عاداتك. ميزانيتك.')}</div>
         </div>
       </aside>
@@ -110,7 +110,7 @@ export function Shell({ children }: { children: ReactNode }) {
         {/* Demo banner */}
         <div data-testid="text-demo-banner" className="flex items-center justify-center gap-2 bg-forest px-4 py-2 text-center text-[11px] font-medium tracking-wide text-ivory/90">
           <span className="rounded-sm bg-gold px-1.5 py-0.5 text-[10px] font-bold text-forest">DEMO</span>
-          <span>{t('DEMO MODE — All financial figures, vendors, and support programs are fictional and provided for demonstration purposes only.', 'وضع العرض التجريبي — جميع الأرقام المالية والمزودين وبرامج الدعم خيالية ومقدمة لأغراض العرض فقط.')}</span>
+          <span>{t('Demo — vendors, prices, ratings and items marked Sample are fictional. Your own entries stay in this browser.', 'عرض تجريبي — المزودون والأسعار والتقييمات والعناصر المعلّمة "مثال" خيالية. بياناتكم تبقى في هذا المتصفح.')}</span>
         </div>
         {storageError && (
           <div className="flex items-center justify-center gap-2 bg-clay/10 px-4 py-2 text-xs text-clay">
@@ -139,12 +139,12 @@ export function Shell({ children }: { children: ReactNode }) {
                 <div className="absolute end-0 top-11 z-50 w-80 rounded-2xl border border-border bg-popover p-2 shadow-[var(--shadow-xl)]">
                   <div className="flex items-center justify-between px-2 py-1.5">
                     <span className="text-sm font-semibold text-forest">{t('Notifications', 'الإشعارات')}</span>
-                    <button data-testid="button-mark-read" className="text-xs text-gold" onClick={() => update((s) => ({ ...s, readNotifs: notifs.map((n) => n.id) }))}>{t('Mark all read', 'تحديد الكل كمقروء')}</button>
+                    <button data-testid="button-mark-read" className="text-xs text-gold" onClick={() => markRead(notifs.map((n) => n.id))}>{t('Mark all read', 'تحديد الكل كمقروء')}</button>
                   </div>
                   <div className="max-h-80 overflow-y-auto">
                     {notifs.length === 0 && <div className="p-4 text-center text-xs text-muted-foreground">{t('You are all caught up.', 'لا توجد إشعارات جديدة.')}</div>}
                     {notifs.map((n) => (
-                      <div key={n.id} className={cn('rounded-xl px-3 py-2 text-xs', !state.readNotifs.includes(n.id) && 'bg-gold/10')}>
+                      <div key={n.id} className={cn('rounded-xl px-3 py-2 text-xs', !readNotifs.includes(n.id) && 'bg-gold/10')}>
                         <div className="text-forest">{n.text}</div>
                         {n.when && <div className="mt-0.5 text-muted-foreground">{n.when}</div>}
                       </div>
@@ -160,15 +160,8 @@ export function Shell({ children }: { children: ReactNode }) {
               </button>
               {profOpen && (
                 <div className="absolute end-0 top-11 z-50 w-56 rounded-2xl border border-border bg-popover p-1.5 text-sm shadow-[var(--shadow-xl)]">
-                  {[
-                    { icon: UserRound, label: t('Edit profile', 'تعديل الملف'), to: '/settings' },
-                    { icon: RefreshCw, label: t('Run onboarding', 'بدء الإعداد من جديد'), to: '/onboarding' },
-                    { icon: Settings, label: t('Settings', 'الإعدادات'), to: '/settings' },
-                  ].map((m) => (
-                    <button key={m.label} data-testid={`button-profile-${m.to.slice(1)}`} onClick={() => { setProfOpen(false); nav(m.to); }} className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-start text-forest hover:bg-muted">
-                      <m.icon className="h-4 w-4 text-gold" />{m.label}
-                    </button>
-                  ))}
+                  <button data-testid="button-profile-quiz" onClick={() => { setProfOpen(false); setQuizOpen(true); }} className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-start text-forest hover:bg-muted"><Sparkles className="h-4 w-4 text-gold" />{t('Edit wedding profile', 'تعديل ملف الزفاف')}</button>
+                  <button data-testid="button-profile-settings" onClick={() => { setProfOpen(false); nav('/settings'); }} className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-start text-forest hover:bg-muted"><Settings className="h-4 w-4 text-gold" />{t('Settings and demo data', 'الإعدادات والبيانات التجريبية')}</button>
                 </div>
               )}
             </div>
@@ -179,13 +172,14 @@ export function Shell({ children }: { children: ReactNode }) {
 
       {/* Mobile bottom nav */}
       <nav className="fixed inset-x-0 bottom-0 z-40 flex justify-around border-t border-border bg-background/95 py-2 backdrop-blur lg:hidden">
-        {NAV.slice(0, 5).map((n) => (
+        {NAV.map((n) => (
           <Link key={n.href} href={n.href} data-testid={`link-mobile-${n.href.slice(1) || 'dashboard'}`} className="flex flex-col items-center gap-0.5 px-2 text-[10px] text-forest">
             <n.icon className="h-5 w-5" strokeWidth={1.5} />
-            {t(n.en, n.ar).split(' ')[0]}
+            {b(n.short)}
           </Link>
         ))}
       </nav>
+      <WeddingQuiz />
     </div>
   );
 }

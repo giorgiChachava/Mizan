@@ -5,6 +5,149 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
+export type InvitationInputTemplate = typeof InvitationInputTemplate[keyof typeof InvitationInputTemplate];
+
+
+export const InvitationInputTemplate = {
+  heritage: 'heritage',
+  garden: 'garden',
+  modern: 'modern',
+} as const;
+
+export type InvitationInputLanguage = typeof InvitationInputLanguage[keyof typeof InvitationInputLanguage];
+
+
+export const InvitationInputLanguage = {
+  en: 'en',
+  ar: 'ar',
+} as const;
+
+export interface InvitationInput {
+  template: InvitationInputTemplate;
+  /**
+     * @minLength 1
+     * @maxLength 160
+     */
+  coupleNames: string;
+  /**
+     * @minLength 1
+     * @maxLength 120
+     */
+  eventName: string;
+  /**
+     * Calendar date YYYY-MM-DD without timezone conversion
+     * @pattern ^\d{4}-\d{2}-\d{2}$
+     */
+  date: string;
+  /** @pattern ^([01][0-9]|2[0-3]):[0-5][0-9]$ */
+  time: string;
+  /**
+     * @minLength 1
+     * @maxLength 160
+     */
+  venue: string;
+  /**
+     * @minLength 1
+     * @maxLength 240
+     */
+  location: string;
+  /** @maxLength 2000 */
+  message: string;
+  language: InvitationInputLanguage;
+  allowPlusOnes: boolean;
+  /**
+     * @minimum 1
+     * @maximum 20
+     */
+  maxParty: number;
+}
+
+export type Invitation = InvitationInput & {
+  id: string;
+  eventId: string;
+  token: string;
+};
+
+export interface InvitationEnvelope {
+  invitation: Invitation | null;
+}
+
+export type WeddingGuestInputStatus = typeof WeddingGuestInputStatus[keyof typeof WeddingGuestInputStatus];
+
+
+export const WeddingGuestInputStatus = {
+  pending: 'pending',
+  attending: 'attending',
+  declined: 'declined',
+} as const;
+
+export interface WeddingGuestInput {
+  /**
+     * @minLength 1
+     * @maxLength 120
+     */
+  name: string;
+  status: WeddingGuestInputStatus;
+  /**
+     * @minimum 0
+     * @maximum 100
+     */
+  attendees: number;
+  /** @maxLength 1000 */
+  notes: string;
+}
+
+export type WeddingGuestSource = typeof WeddingGuestSource[keyof typeof WeddingGuestSource];
+
+
+export const WeddingGuestSource = {
+  manual: 'manual',
+  rsvp: 'rsvp',
+} as const;
+
+export type WeddingGuest = WeddingGuestInput & {
+  id: string;
+  eventId: string;
+  source: WeddingGuestSource;
+};
+
+export type RsvpInputStatus = typeof RsvpInputStatus[keyof typeof RsvpInputStatus];
+
+
+export const RsvpInputStatus = {
+  attending: 'attending',
+  declined: 'declined',
+} as const;
+
+export interface RsvpInput {
+  /**
+     * @minLength 1
+     * @maxLength 120
+     */
+  name: string;
+  status: RsvpInputStatus;
+  /**
+     * @minimum 0
+     * @maximum 20
+     */
+  attendees: number;
+  responseKey?: string;
+}
+
+export type RsvpReceiptStatus = typeof RsvpReceiptStatus[keyof typeof RsvpReceiptStatus];
+
+
+export const RsvpReceiptStatus = {
+  attending: 'attending',
+  declined: 'declined',
+} as const;
+
+export interface RsvpReceipt {
+  responseKey: string;
+  status: RsvpReceiptStatus;
+  attendees: number;
+}
+
 export type AssistantInputLanguage = typeof AssistantInputLanguage[keyof typeof AssistantInputLanguage];
 
 

@@ -9,6 +9,282 @@ import * as zod from 'zod';
 
 
 /**
+ * @summary Read the current browser's private demo wedding invitation
+ */
+export const getMyInvitationResponseInvitationOneOneCoupleNamesMax = 160;
+
+export const getMyInvitationResponseInvitationOneOneEventNameMax = 120;
+
+export const getMyInvitationResponseInvitationOneOneDateRegExp = new RegExp('^\\d{4}-\\d{2}-\\d{2}$');
+export const getMyInvitationResponseInvitationOneOneTimeRegExp = new RegExp('^([01][0-9]|2[0-3]):[0-5][0-9]$');
+export const getMyInvitationResponseInvitationOneOneVenueMax = 160;
+
+export const getMyInvitationResponseInvitationOneOneLocationMax = 240;
+
+export const getMyInvitationResponseInvitationOneOneMessageMax = 2000;
+
+export const getMyInvitationResponseInvitationOneOneMaxPartyMax = 20;
+
+
+
+export const GetMyInvitationResponse = zod.object({
+  "invitation": zod.union([zod.object({
+  "template": zod.enum(['heritage', 'garden', 'modern']),
+  "coupleNames": zod.string().min(1).max(getMyInvitationResponseInvitationOneOneCoupleNamesMax),
+  "eventName": zod.string().min(1).max(getMyInvitationResponseInvitationOneOneEventNameMax),
+  "date": zod.string().regex(getMyInvitationResponseInvitationOneOneDateRegExp).describe('Calendar date YYYY-MM-DD without timezone conversion'),
+  "time": zod.string().regex(getMyInvitationResponseInvitationOneOneTimeRegExp),
+  "venue": zod.string().min(1).max(getMyInvitationResponseInvitationOneOneVenueMax),
+  "location": zod.string().min(1).max(getMyInvitationResponseInvitationOneOneLocationMax),
+  "message": zod.string().max(getMyInvitationResponseInvitationOneOneMessageMax),
+  "language": zod.enum(['en', 'ar']),
+  "allowPlusOnes": zod.boolean(),
+  "maxParty": zod.number().int().min(1).max(getMyInvitationResponseInvitationOneOneMaxPartyMax)
+}).and(zod.object({
+  "id": zod.string(),
+  "eventId": zod.string(),
+  "token": zod.string()
+})),zod.null()])
+})
+
+
+export const saveInvitationBodyCoupleNamesMax = 160;
+
+export const saveInvitationBodyEventNameMax = 120;
+
+export const saveInvitationBodyDateRegExp = new RegExp('^\\d{4}-\\d{2}-\\d{2}$');
+export const saveInvitationBodyTimeRegExp = new RegExp('^([01][0-9]|2[0-3]):[0-5][0-9]$');
+export const saveInvitationBodyVenueMax = 160;
+
+export const saveInvitationBodyLocationMax = 240;
+
+export const saveInvitationBodyMessageMax = 2000;
+
+export const saveInvitationBodyMaxPartyMax = 20;
+
+
+
+export const SaveInvitationBody = zod.object({
+  "template": zod.enum(['heritage', 'garden', 'modern']),
+  "coupleNames": zod.string().min(1).max(saveInvitationBodyCoupleNamesMax),
+  "eventName": zod.string().min(1).max(saveInvitationBodyEventNameMax),
+  "date": zod.string().regex(saveInvitationBodyDateRegExp).describe('Calendar date YYYY-MM-DD without timezone conversion'),
+  "time": zod.string().regex(saveInvitationBodyTimeRegExp),
+  "venue": zod.string().min(1).max(saveInvitationBodyVenueMax),
+  "location": zod.string().min(1).max(saveInvitationBodyLocationMax),
+  "message": zod.string().max(saveInvitationBodyMessageMax),
+  "language": zod.enum(['en', 'ar']),
+  "allowPlusOnes": zod.boolean(),
+  "maxParty": zod.number().int().min(1).max(saveInvitationBodyMaxPartyMax)
+})
+
+export const saveInvitationResponseOneCoupleNamesMax = 160;
+
+export const saveInvitationResponseOneEventNameMax = 120;
+
+export const saveInvitationResponseOneDateRegExp = new RegExp('^\\d{4}-\\d{2}-\\d{2}$');
+export const saveInvitationResponseOneTimeRegExp = new RegExp('^([01][0-9]|2[0-3]):[0-5][0-9]$');
+export const saveInvitationResponseOneVenueMax = 160;
+
+export const saveInvitationResponseOneLocationMax = 240;
+
+export const saveInvitationResponseOneMessageMax = 2000;
+
+export const saveInvitationResponseOneMaxPartyMax = 20;
+
+
+
+export const SaveInvitationResponse = zod.object({
+  "template": zod.enum(['heritage', 'garden', 'modern']),
+  "coupleNames": zod.string().min(1).max(saveInvitationResponseOneCoupleNamesMax),
+  "eventName": zod.string().min(1).max(saveInvitationResponseOneEventNameMax),
+  "date": zod.string().regex(saveInvitationResponseOneDateRegExp).describe('Calendar date YYYY-MM-DD without timezone conversion'),
+  "time": zod.string().regex(saveInvitationResponseOneTimeRegExp),
+  "venue": zod.string().min(1).max(saveInvitationResponseOneVenueMax),
+  "location": zod.string().min(1).max(saveInvitationResponseOneLocationMax),
+  "message": zod.string().max(saveInvitationResponseOneMessageMax),
+  "language": zod.enum(['en', 'ar']),
+  "allowPlusOnes": zod.boolean(),
+  "maxParty": zod.number().int().min(1).max(saveInvitationResponseOneMaxPartyMax)
+}).and(zod.object({
+  "id": zod.string(),
+  "eventId": zod.string(),
+  "token": zod.string()
+}))
+
+
+export const listWeddingGuestsResponseOneNameMax = 120;
+
+export const listWeddingGuestsResponseOneAttendeesMin = 0;
+export const listWeddingGuestsResponseOneAttendeesMax = 100;
+
+export const listWeddingGuestsResponseOneNotesMax = 1000;
+
+
+
+export const ListWeddingGuestsResponseItem = zod.object({
+  "name": zod.string().min(1).max(listWeddingGuestsResponseOneNameMax),
+  "status": zod.enum(['pending', 'attending', 'declined']),
+  "attendees": zod.number().int().min(listWeddingGuestsResponseOneAttendeesMin).max(listWeddingGuestsResponseOneAttendeesMax),
+  "notes": zod.string().max(listWeddingGuestsResponseOneNotesMax)
+}).and(zod.object({
+  "id": zod.string(),
+  "eventId": zod.string(),
+  "source": zod.enum(['manual', 'rsvp'])
+}))
+export const ListWeddingGuestsResponse = zod.array(ListWeddingGuestsResponseItem)
+
+
+export const addWeddingGuestBodyNameMax = 120;
+
+export const addWeddingGuestBodyAttendeesMin = 0;
+export const addWeddingGuestBodyAttendeesMax = 100;
+
+export const addWeddingGuestBodyNotesMax = 1000;
+
+
+
+export const AddWeddingGuestBody = zod.object({
+  "name": zod.string().min(1).max(addWeddingGuestBodyNameMax),
+  "status": zod.enum(['pending', 'attending', 'declined']),
+  "attendees": zod.number().int().min(addWeddingGuestBodyAttendeesMin).max(addWeddingGuestBodyAttendeesMax),
+  "notes": zod.string().max(addWeddingGuestBodyNotesMax)
+})
+
+export const addWeddingGuestResponseOneNameMax = 120;
+
+export const addWeddingGuestResponseOneAttendeesMin = 0;
+export const addWeddingGuestResponseOneAttendeesMax = 100;
+
+export const addWeddingGuestResponseOneNotesMax = 1000;
+
+
+
+export const AddWeddingGuestResponse = zod.object({
+  "name": zod.string().min(1).max(addWeddingGuestResponseOneNameMax),
+  "status": zod.enum(['pending', 'attending', 'declined']),
+  "attendees": zod.number().int().min(addWeddingGuestResponseOneAttendeesMin).max(addWeddingGuestResponseOneAttendeesMax),
+  "notes": zod.string().max(addWeddingGuestResponseOneNotesMax)
+}).and(zod.object({
+  "id": zod.string(),
+  "eventId": zod.string(),
+  "source": zod.enum(['manual', 'rsvp'])
+}))
+
+
+export const EditWeddingGuestParams = zod.object({
+  "id": zod.coerce.string().uuid()
+})
+
+export const editWeddingGuestBodyNameMax = 120;
+
+export const editWeddingGuestBodyAttendeesMin = 0;
+export const editWeddingGuestBodyAttendeesMax = 100;
+
+export const editWeddingGuestBodyNotesMax = 1000;
+
+
+
+export const EditWeddingGuestBody = zod.object({
+  "name": zod.string().min(1).max(editWeddingGuestBodyNameMax),
+  "status": zod.enum(['pending', 'attending', 'declined']),
+  "attendees": zod.number().int().min(editWeddingGuestBodyAttendeesMin).max(editWeddingGuestBodyAttendeesMax),
+  "notes": zod.string().max(editWeddingGuestBodyNotesMax)
+})
+
+export const editWeddingGuestResponseOneNameMax = 120;
+
+export const editWeddingGuestResponseOneAttendeesMin = 0;
+export const editWeddingGuestResponseOneAttendeesMax = 100;
+
+export const editWeddingGuestResponseOneNotesMax = 1000;
+
+
+
+export const EditWeddingGuestResponse = zod.object({
+  "name": zod.string().min(1).max(editWeddingGuestResponseOneNameMax),
+  "status": zod.enum(['pending', 'attending', 'declined']),
+  "attendees": zod.number().int().min(editWeddingGuestResponseOneAttendeesMin).max(editWeddingGuestResponseOneAttendeesMax),
+  "notes": zod.string().max(editWeddingGuestResponseOneNotesMax)
+}).and(zod.object({
+  "id": zod.string(),
+  "eventId": zod.string(),
+  "source": zod.enum(['manual', 'rsvp'])
+}))
+
+
+export const RemoveWeddingGuestParams = zod.object({
+  "id": zod.coerce.string().uuid()
+})
+
+export const RemoveWeddingGuestResponse = zod.void()
+
+
+export const GetPublicInvitationParams = zod.object({
+  "token": zod.coerce.string().uuid()
+})
+
+export const getPublicInvitationResponseOneCoupleNamesMax = 160;
+
+export const getPublicInvitationResponseOneEventNameMax = 120;
+
+export const getPublicInvitationResponseOneDateRegExp = new RegExp('^\\d{4}-\\d{2}-\\d{2}$');
+export const getPublicInvitationResponseOneTimeRegExp = new RegExp('^([01][0-9]|2[0-3]):[0-5][0-9]$');
+export const getPublicInvitationResponseOneVenueMax = 160;
+
+export const getPublicInvitationResponseOneLocationMax = 240;
+
+export const getPublicInvitationResponseOneMessageMax = 2000;
+
+export const getPublicInvitationResponseOneMaxPartyMax = 20;
+
+
+
+export const GetPublicInvitationResponse = zod.object({
+  "template": zod.enum(['heritage', 'garden', 'modern']),
+  "coupleNames": zod.string().min(1).max(getPublicInvitationResponseOneCoupleNamesMax),
+  "eventName": zod.string().min(1).max(getPublicInvitationResponseOneEventNameMax),
+  "date": zod.string().regex(getPublicInvitationResponseOneDateRegExp).describe('Calendar date YYYY-MM-DD without timezone conversion'),
+  "time": zod.string().regex(getPublicInvitationResponseOneTimeRegExp),
+  "venue": zod.string().min(1).max(getPublicInvitationResponseOneVenueMax),
+  "location": zod.string().min(1).max(getPublicInvitationResponseOneLocationMax),
+  "message": zod.string().max(getPublicInvitationResponseOneMessageMax),
+  "language": zod.enum(['en', 'ar']),
+  "allowPlusOnes": zod.boolean(),
+  "maxParty": zod.number().int().min(1).max(getPublicInvitationResponseOneMaxPartyMax)
+}).and(zod.object({
+  "id": zod.string(),
+  "eventId": zod.string(),
+  "token": zod.string()
+}))
+
+
+export const SubmitRsvpParams = zod.object({
+  "token": zod.coerce.string().uuid()
+})
+
+export const submitRsvpBodyNameMax = 120;
+
+export const submitRsvpBodyAttendeesMin = 0;
+export const submitRsvpBodyAttendeesMax = 20;
+
+
+
+export const SubmitRsvpBody = zod.object({
+  "name": zod.string().min(1).max(submitRsvpBodyNameMax),
+  "status": zod.enum(['attending', 'declined']),
+  "attendees": zod.number().int().min(submitRsvpBodyAttendeesMin).max(submitRsvpBodyAttendeesMax),
+  "responseKey": zod.string().uuid().optional()
+})
+
+export const SubmitRsvpResponse = zod.object({
+  "responseKey": zod.string(),
+  "status": zod.enum(['attending', 'declined']),
+  "attendees": zod.number().int()
+})
+
+
+/**
  * @summary Analyse illustrative wedding finances using deterministic rules
  */
 export const askMizanBodyMessageMax = 4000;

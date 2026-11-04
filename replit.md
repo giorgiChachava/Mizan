@@ -1,6 +1,6 @@
 # Mizan | ميزان
 
-An English/Arabic Emirati wedding-planning competition demo with budgets, a wedding blueprint, fictional vendors and support programs, and simulated family collaboration.
+An English/Arabic Emirati wedding planner with a connected profile quiz, wedding checklist, budgets, fictional vendor discovery, digital invitations and guest RSVPs.
 
 ## Run & Operate
 
@@ -25,17 +25,21 @@ An English/Arabic Emirati wedding-planning competition demo with budgets, a wedd
 
 - `artifacts/mizan/src/` — frontend, local demo persistence and bilingual UI.
 - `artifacts/api-server/src/lib/mizan.ts` — deterministic illustrative financial analysis.
-- `lib/api-spec/openapi.yaml` — assistant API contract; regenerate clients after edits.
-- `attached_assets/Pasted--REPLIT-MASTER-BUILD-PROMPT-MIZAN-1-Product-overview-Bu_1793723446020.txt` — complete original product brief.
+- `artifacts/api-server/src/routes/invitations.ts` — invitation ownership, public invitation reads and RSVP/guest API.
+- `lib/db/src/schema/` — persistent invitations/events and guest records.
+- `lib/api-spec/openapi.yaml` — API contract; regenerate clients after edits.
+- `attached_assets/Pasted--MIZAN-Build-the-Core-Wedding-Planning-MVP-I-want-you-t_1793790184838.txt` — current product brief (supersedes original broader brief).
 
 ## Architecture decisions
 
-- Browser-local persistence is intentional for a reliable competition demonstration, as permitted in the brief. Family collaboration is simulated, not multi-user access.
-- The assistant deliberately uses a labelled deterministic rules engine so the demo never depends on a paid API or credentials.
+- Preserve existing browser-local planning state during migration; invitations and guest RSVPs use PostgreSQL so a public guest response reaches the couple's browser.
+- No account signup is required for this demo. An unguessable HttpOnly browser cookie scopes invitation ownership; only its hash is stored. Clearing cookies loses this browser's editing access. Public invitation UUIDs permit viewing and submitting an RSVP, never listing other guests.
+- A per-response UUID permits a guest to update their own RSVP without duplicates. It is not included in private guest-list responses.
+- No paid APIs are needed. The legacy deterministic assistant API remains available for future reuse but is not a core UI module.
 
 ## Product
 
-Wedding organisation, editable expense and savings planning, vendor discovery/comparison, illustrative support matching, family coordination, and English/Arabic RTL support.
+See `.agents/memory/core-mvp-scope.md` for the current scope and exclusions. Profile/settings are subordinate controls, not extra major navigation modules.
 
 ## User preferences
 

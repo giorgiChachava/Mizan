@@ -4,24 +4,25 @@ import { ErrorBoundary } from '@/components/error-boundary';
 import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import NotFound from '@/pages/not-found';
-import { Route, Switch, useLocation, Router as WouterRouter } from 'wouter';
+import { Redirect, Route, Switch, useLocation, Router as WouterRouter } from 'wouter';
 import { AppProvider } from '@/lib/store';
 import { Shell } from '@/components/shell';
 import Dashboard from '@/pages/dashboard';
 import Wedding from '@/pages/wedding';
 import Budget from '@/pages/budget';
 import Vendors from '@/pages/vendors';
-import Assistant from '@/pages/assistant';
-import Support from '@/pages/support';
-import Family from '@/pages/family';
+import VendorDetail from '@/pages/vendor-detail';
+import Invitations from '@/pages/invitations';
+import InvitePage from '@/pages/invite';
 import Settings from '@/pages/settings';
-import Onboarding from '@/pages/onboarding';
 
 const queryClient = new QueryClient();
 
 function Router() {
   const [loc] = useLocation();
-  if (loc === '/onboarding') return <RoutedErrorBoundary><Onboarding /></RoutedErrorBoundary>;
+  if (loc.startsWith('/invite/')) {
+    return <RoutedErrorBoundary><Switch><Route path="/invite/:token" component={InvitePage} /></Switch></RoutedErrorBoundary>;
+  }
   return (
     <Shell>
       <RoutedErrorBoundary>
@@ -30,10 +31,10 @@ function Router() {
           <Route path="/wedding" component={Wedding} />
           <Route path="/budget" component={Budget} />
           <Route path="/vendors" component={Vendors} />
-          <Route path="/assistant" component={Assistant} />
-          <Route path="/support" component={Support} />
-          <Route path="/family" component={Family} />
+          <Route path="/vendors/:id" component={VendorDetail} />
+          <Route path="/invitations" component={Invitations} />
           <Route path="/settings" component={Settings} />
+          <Route path="/onboarding"><Redirect to="/" /></Route>
           <Route component={NotFound} />
         </Switch>
       </RoutedErrorBoundary>

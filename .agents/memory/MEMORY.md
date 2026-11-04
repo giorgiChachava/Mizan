@@ -1,0 +1,1 @@
+- [Core MVP scope](core-mvp-scope.md) — five-section wedding planner; invitations and connected guest RSVPs are central, not extra marketplace modules.
